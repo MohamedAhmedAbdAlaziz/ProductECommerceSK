@@ -6,12 +6,13 @@ using Core.Interfaces;
 using Core.Specifications;
 using API.Dtos;
 using AutoMapper;
+using API.Errors;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+ //   [ApiExplorerSettings(IgnoreApi=true)]
+     
+    public class ProductsController : BaseApiController
     {
       
        // private readonly IProductRepository _productRepository;
@@ -35,6 +36,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
+         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        
         public async Task<ActionResult<List<ProductToReturnDto>>> GetProducts()
         {
             var spec= new ProductsWithTypesAndBrandsSpecification();
@@ -56,11 +60,14 @@ namespace API.Controllers
             // return Ok(p);
         }
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {  
               var spec= new ProductsWithTypesAndBrandsSpecification(id);
              
             var p= await _prductRepo.GetEntityWithSpec(spec);
+            if(p==null) return NotFound(new ApiResponse(404));
            return    _mapper.Map<Product,ProductToReturnDto>(p);
             //    var p2=  new ProductToReturnDto{
             //   Id= p.Id,
@@ -74,6 +81,9 @@ namespace API.Controllers
             //    return p2;
         }
          [HttpGet("brands")]
+          [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        
         public async Task<ActionResult<List<ProductBrand>>> GetProductBrands()
         {
               var spec= new ProductsWithTypesAndBrandsSpecification();
@@ -82,6 +92,9 @@ namespace API.Controllers
             return Ok(products);
         }
    [HttpGet("types")]
+       [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        
         public async Task<ActionResult<List<ProductType>>> GetProductTypes()
         {
             var products = await _prductTypeRepo.GetAllAsync();
