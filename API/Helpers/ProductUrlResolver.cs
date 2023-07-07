@@ -4,6 +4,7 @@ using Core.Entities;
 
 namespace API.Helpers
 {
+  
     public class ProductUrlResolver : IValueResolver<Product, ProductToReturnDto, string>
     {
         private readonly IConfiguration _config;
@@ -19,6 +20,9 @@ namespace API.Helpers
             return _config["ApiUrl"]+source.PictureUrl;
           }
           return null;
+          
         }
+
     }
+
 }

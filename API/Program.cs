@@ -8,6 +8,7 @@ using API.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using API.Errors;
 using API.Extensions;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,17 @@ builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(x=> x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<IConnectionMultiplexer>(c =>{
 
+              var configration= ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"),true);
+              return ConnectionMultiplexer.Connect(configration); 
+           });
+builder.Services.AddCors(opt=>{
+opt.AddPolicy("CorsPolicy",policy=>{
+   policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+});
+
+});
 builder.Services.AddApplicationServices();
 builder.Services.AddswaggerDocmentation();
 
@@ -43,7 +54,7 @@ using(var scope = host.Services.CreateAsyncScope()){
  catch(Exception ex){
     var logger= loggerFactory.CreateLogger<Program>();
     logger.LogError(ex,"An error occured during migrations");
- }
+ } 
 }
 host.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
@@ -53,9 +64,9 @@ if (host.Environment.IsDevelopment())
 }
 host.UseStatusCodePagesWithReExecute("/erorr/{0}");
 host.UseHttpsRedirection();
-
+host.UseCors("CorsPolicy");
 host.UseAuthorization();
 host.UseStaticFiles();
-host.MapControllers();
 
+host.MapControllers();
 host.Run();

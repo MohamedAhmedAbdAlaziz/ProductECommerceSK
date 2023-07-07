@@ -7,6 +7,7 @@ using Core.Specifications;
 using API.Dtos;
 using AutoMapper;
 using API.Errors;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -39,24 +40,28 @@ namespace API.Controllers
          [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         
-        public async Task<ActionResult<List<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> 
+        GetProducts([FromQuery]ProductSpecParams productSpecParams )
         {
-            var spec= new ProductsWithTypesAndBrandsSpecification();
-    
+            var spec= new ProductsWithTypesAndBrandsSpecification(productSpecParams);
+            var Countspec= new ProductsWithCountSpecification(productSpecParams);
+          
+            var totalItems = await _prductRepo.CountAsync(Countspec);
             var products = await _prductRepo.ListAsync(spec);
+            var data = _mapper.Map<IReadOnlyList< Product>,IReadOnlyList< ProductToReturnDto> >(products);
+// var p= products.Select(p=> new ProductToReturnDto{  
+//               Id= p.Id,
+//               Name= p.Name,
+//               Description=p.Description,
+//               Price= p.Price,
+//               PictureUrl= p.PictureUrl,
+//               ProductBrand= p.ProductBrand.Name,
+//               ProductType = p.ProductType.Name
 
-            return Ok(  _mapper.Map<IReadOnlyList< Product>,IReadOnlyList< ProductToReturnDto> >(products));
-            // var p= products.Select(p=> new ProductToReturnDto{
-            //   Id= p.Id,
-            //   Name= p.Name,
-            //   Description=p.Description,
-            //   Price= p.Price,
-            //   PictureUrl= p.PictureUrl,
-            //   ProductBrand= p.ProductBrand.Name,
-            //   ProductType = p.ProductType.Name
-
-            // }
-            // );
+//             }
+//             );
+            return Ok(new Pagination<ProductToReturnDto>(productSpecParams.PageIndex,productSpecParams.PageSize,totalItems,data));
+         
             // return Ok(p);
         }
         [HttpGet("{id}")]
@@ -86,7 +91,7 @@ namespace API.Controllers
         
         public async Task<ActionResult<List<ProductBrand>>> GetProductBrands()
         {
-              var spec= new ProductsWithTypesAndBrandsSpecification();
+              
 
             var products = await _prductbrandRepo.GetAllAsync();
             return Ok(products);

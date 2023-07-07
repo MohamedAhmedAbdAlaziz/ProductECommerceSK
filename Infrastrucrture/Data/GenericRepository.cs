@@ -15,6 +15,11 @@ namespace Infrastrucrture.Data
             _context = context;
         }
 
+        public async Task<int> CountAsync(ISpecifications<T> spec)
+        {
+           return await ApplySpecifications(spec).CountAsync();
+        }
+
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
            return await _context.Set<T>().ToListAsync();
