@@ -15,12 +15,19 @@ namespace Infrastrucrture.Data
             _context = context;
         }
 
-        public async Task<int> CountAsync(ISpecifications<T> spec)
+  public void Add(T Entity)
+  {
+   _context.Set<T>().Add(Entity); 
+  }
+
+  public async Task<int> CountAsync(ISpecifications<T> spec)
         {
            return await ApplySpecifications(spec).CountAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAllAsync()
+
+
+  public async Task<IReadOnlyList<T>> GetAllAsync()
         {
            return await _context.Set<T>().ToListAsync();
 
@@ -31,7 +38,16 @@ namespace Infrastrucrture.Data
            return await _context.Set<T>().FindAsync(id);
         
         }
-
+    public void Delete(T Entity)
+        {
+          _context.Set<T>().Remove(Entity); 
+        }
+ public void Update(T Entity)
+  {
+   _context.Set<T>().Update(Entity);
+   _context.Entry(Entity).State= EntityState.Modified; 
+  
+  }
         public async Task<T> GetEntityWithSpec(ISpecifications<T> spec)
         {
             return await ApplySpecifications(spec).FirstOrDefaultAsync();
@@ -42,7 +58,10 @@ namespace Infrastrucrture.Data
         {
             return await ApplySpecifications(spec).ToListAsync();
         }
-        private IQueryable<T> ApplySpecifications(ISpecifications<T> spec){
+
+ 
+
+  private IQueryable<T> ApplySpecifications(ISpecifications<T> spec){
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(),spec);
         }
     }

@@ -1,0 +1,18 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
+import { CheckoutComponent } from './checkout.component';
+import { SharedModule } from '../shared/shared.module';
+import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
+
+const routes: Routes = [
+  { path: '', component: CheckoutComponent },
+  { path: 'success', component: CheckoutSuccessComponent },
+];
+
+@NgModule({
+  declarations: [],
+  imports: [CommonModule, RouterModule.forChild(routes), SharedModule],
+  exports: [RouterModule],
+})
+export class CheckRoutingModule {}

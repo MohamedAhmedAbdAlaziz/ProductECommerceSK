@@ -8,6 +8,11 @@
       <div class="container">
         <div class="row">
           <div class="col-12 py-5 mb-1">
+            <app-basket-summary
+              (increment)="incrementItemQuantity($event)"
+              (decrement)="decrementItemQuantity($event)"
+              (remove)="removeBasketItem($event)"
+            ></app-basket-summary>
             <div class="table-reponsive">
               <table class="table">
                 <thead>
@@ -99,6 +104,8 @@
           </div>
         </div>
         <div class="col-6 offset-6">
+          <!-- <app-order-totals></app-order-totals> -->
+          <app-order-sepfic [baskettotals$]=""></app-order-sepfic>
           <a
             routerLink="/checkout"
             class="btn btn-outline-primary py-2 btn-block"

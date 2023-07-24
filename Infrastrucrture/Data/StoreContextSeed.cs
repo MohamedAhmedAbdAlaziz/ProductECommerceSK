@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 
@@ -48,10 +49,18 @@ namespace Infrastrucrture.Data
 
                 }
     
+  if(!context.DeliveryMethods.Any()){
+         var productData= 
+               File.ReadAllText("../Infrastrucrture/Data/SeedData/delivery.json");
+               var products=JsonSerializer.Deserialize<List<DeliveryMethod>>(productData);
+                foreach(var item in products)
+               {
+              
 
-
-
-
+                context.DeliveryMethods.Add(item);
+                }
+                await context.SaveChangesAsync();
+                }
       }
       catch(Exception ex){
         var logeer = loggerFactory.CreateLogger<StoreContextSeed>();

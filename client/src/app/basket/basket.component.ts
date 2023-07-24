@@ -15,7 +15,13 @@ export class BasketComponent {
   ngOnInit(): void {
     this.basket$ = this.basketService.basket$;
   }
-  removeBasketItem(item: IBasketItem) {}
-  incrementItemQuantity(item: IBasketItem) {}
-  decrementItemQuantity(item: IBasketItem) {}
+  removeBasketItem(item: IBasketItem) {
+    this.basketService.removeItemFormBasket(item);
+  }
+  incrementItemQuantity(item: IBasketItem) {
+    this.basketService.incrementItemQuantity(item);
+  }
+  decrementItemQuantity(item: IBasketItem) {
+    this.basketService.decrementItemQuantity(item);
+  }
 }
