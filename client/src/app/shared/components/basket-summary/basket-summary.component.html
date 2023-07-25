@@ -10,7 +10,10 @@
           <div class="col-12 py-5 mb-1">
             <div class="table-reponsive">
               <table class="table">
-                <thead>
+                <thead
+                  [class.thead-light]="isBasket || isOrder"
+                  class="border-0 py-2"
+                >
                   <tr>
                     <th
                       class="border-0"
@@ -64,12 +67,15 @@
                         <div class="ml-3 d-inline-block align-middle">
                           <h5 class="mb-0">
                             <a
-                              routerLink="/shop/{{ item.id }}"
+                              routerLink="/shop/{{
+                                item.id || item.prodctItemid
+                              }}"
                               class="text-dark"
                               >{{ item.productName }}</a
                             >
                           </h5>
                           <span
+                            *ngIf="item.type"
                             class="text-muted font-weight-normal font-italic d-block"
                             >Type:{{ item.type }}
                           </span>

@@ -15,6 +15,8 @@ export interface IOrder {
   subtotal: number;
   status: number;
   paymentIntentId: string;
+  shippingPrice: number;
+  total: number;
 }
 
 export interface OrderItem {
